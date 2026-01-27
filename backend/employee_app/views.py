@@ -19,7 +19,7 @@ def save_employee(request):
 
         return JsonResponse({"message": "Employee saved successfully"})
         
-# 🟢 GET EMPLOYEE DATA (GET)
+
     elif request.method == "GET":
         employees = Employee.objects.all()
 
