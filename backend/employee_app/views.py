@@ -12,7 +12,7 @@ def save_employee(request):
             name=data['name'],
             age=data['age'],
             department=data['department'],
-            job_role=data['jobRole'],
+            job_role=data['job_role'],
             salary=data['salary'],
             plant=data['plant']
         )
