@@ -99,4 +99,18 @@ def save_employee(request, employee_id=None):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-   
+    elif request.method == 'DELETE':
+        if not employee_id:
+            return JsonResponse({"error": "Employee ID is required in URL"}, status=400)
+        
+        try:
+            employee = Employee.objects.get(id=employee_id)
+            employee.delete()
+            return JsonResponse({"message": "Employee deleted successfully"}, status=204)
+        except Employee.DoesNotExist:
+            return JsonResponse({"error": "Employee not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    
+    else:
+        return JsonResponse({"error": "Method not allowed"}, status=405)
