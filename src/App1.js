@@ -94,6 +94,35 @@ function App1() {
     });
   };
 
+  // 🗑️ DELETE EMPLOYEE
+  const deleteEmployee = async (id, name) => {
+    // Confirm before deleting
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${name}?`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/employee/save/${id}/`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Employee deleted successfully!");
+        fetchEmployees(); // Refresh the list
+      } else {
+        alert("Failed to delete employee");
+      }
+    } catch (error) {
+      console.error("Error deleting employee", error);
+      alert("Error deleting employee");
+    }
+  };
+
  
   return (
     <div>
@@ -231,6 +260,7 @@ function App1() {
                           onClick={() => startEdit(employee)}
                           style={{
                             padding: '5px 10px',
+                            marginRight: '5px',
                             backgroundColor: '#007bff',
                             color: 'white',
                             border: 'none',
@@ -239,6 +269,19 @@ function App1() {
                           }}
                         >
                           Edit
+                        </button>
+                        <button
+                          onClick={() => deleteEmployee(employee.id, employee.name)}
+                          style={{
+                            padding: '5px 10px',
+                            backgroundColor: '#dc3545',
+                            color: 'white',
+                            border: 'none',
+                            cursor: 'pointer',
+                            borderRadius: '3px'
+                          }}
+                        >
+                          Delete
                         </button>
                       </td>
                     </>
