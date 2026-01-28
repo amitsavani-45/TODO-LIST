@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-your-secret-key-change-in-production'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: don't run with debug turned in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -59,7 +59,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'employees',
+        'USER': 'employees_user',
+        'PASSWORD': 'amit45',  # REPLACE WITH YOUR ACTUAL PASSWORD
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
