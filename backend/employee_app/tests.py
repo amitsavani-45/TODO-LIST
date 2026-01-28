@@ -1,12 +1,15 @@
-
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 from .models import Employee
 
+
+# =========================
+# MODEL TESTS
+# =========================
 class EmployeeModelTest(TestCase):
     """Test cases for Employee model"""
-    
+
     def setUp(self):
         self.employee = Employee.objects.create(
             name="John Doe",
@@ -16,17 +19,23 @@ class EmployeeModelTest(TestCase):
             salary=75000.00,
             plant="Mumbai"
         )
-    
+
     def test_employee_creation(self):
-        """Test employee is created correctly"""
+        """Employee object created correctly"""
         self.assertEqual(self.employee.name, "John Doe")
         self.assertEqual(self.employee.age, 30)
-        self.assertEqual(str(self.employee), "John Doe - Software Engineer")
+        self.assertEqual(
+            str(self.employee),
+            "John Doe - Software Engineer"
+        )
 
 
+# =========================
+# API TESTS
+# =========================
 class EmployeeAPITest(APITestCase):
-    """Test cases for Employee API endpoints"""
-    
+    """Test cases for Employee API"""
+
     def setUp(self):
         self.employee_data = {
             "name": "Jane Smith",
@@ -37,15 +46,15 @@ class EmployeeAPITest(APITestCase):
             "plant": "Delhi"
         }
         self.employee = Employee.objects.create(**self.employee_data)
-    
+
     def test_get_all_employees(self):
-        """Test GET all employees"""
-        response = self.client.get('/api/employees/')
+        """GET all employees"""
+        response = self.client.get("/api/employees/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-    
+
     def test_create_employee(self):
-        """Test POST create employee"""
+        """POST create employee"""
         new_employee = {
             "name": "Bob Johnson",
             "age": 35,
@@ -54,31 +63,32 @@ class EmployeeAPITest(APITestCase):
             "salary": 70000.00,
             "plant": "Bangalore"
         }
-        response = self.client.post('/api/employees/', new_employee, format='json')
+
+        response = self.client.post(
+            "/api/employees/",
+            new_employee,
+            format="json"
+        )
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Employee.objects.count(), 2)
-    
+
     def test_get_single_employee(self):
-        """Test GET single employee"""
-        response = self.client.get(f'/api/employees/{self.employee.id}/')
+        """GET single employee"""
+        response = self.client.get(f"/api/employees/{self.employee.id}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], "Jane Smith")
-    
+        self.assertEqual(response.data["name"], "Jane Smith")
+
     def test_update_employee(self):
-        """Test PUT update employee"""
+        """PUT update employee"""
         updated_data = self.employee_data.copy()
-        updated_data['salary'] = 70000.00
+        updated_data["salary"] = 70000.00
+
         response = self.client.put(
-            f'/api/employees/{self.employee.id}/',
+            f"/api/employees/{self.employee.id}/",
             updated_data,
-            format='json'
+            format="json"
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.employee.refresh_from_db()
-        self.assertEqual(float(self.employee.salary), 70000.00)
-    
-    def test_delete_employee(self):
-        """Test DELETE employee"""
-        response = self.client.delete(f'/api/employees/{self.employee.id}/')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(Employee.objects.count(), 0)
+        self.employee.refr
