@@ -46,7 +46,6 @@ function App() {
       const data = await response.json();
       alert(data.message);
 
-      // Clear form
       setFormData({
         name: "",
         age: "",
@@ -56,14 +55,13 @@ function App() {
         plant: "",
       });
 
-      // Refresh employee list
+      
       fetchEmployees();
     } catch (error) {
       alert("Error saving employee");
     }
   };
 
-  // 📥 GET DATA
   const fetchEmployees = async () => {
     try {
       const response = await fetch(
@@ -76,7 +74,6 @@ function App() {
     }
   };
 
-  // 🚀 LOAD DATA ON PAGE LOAD
   useEffect(() => {
     fetchEmployees();
   }, []);
