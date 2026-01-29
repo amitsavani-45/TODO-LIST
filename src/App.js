@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import atomone from "./image/atomone.jpg";
-import { Routes, Route,  } from "react-router-dom";
-import App1 from './App1';
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 
 function App() {
-
-
+  const location = useLocation();
+  const navigate = useNavigate();
   
-  // 🟢 FORM STATE (POST)
+  // Get employee data from navigation state (if editing)
+  const employeeToEdit = location.state?.employee;
+  
+  // 🟢 FORM STATE (POST/PUT)
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -18,8 +20,19 @@ function App() {
     plant: "",
   });
 
-  // 🟢 GET DATA STATE
-  const [employees, setEmployees] = useState([]);
+  // 🔄 POPULATE FORM IF EDITING
+  useEffect(() => {
+    if (employeeToEdit) {
+      setFormData({
+        name: employeeToEdit.name,
+        age: employeeToEdit.age,
+        department: employeeToEdit.department,
+        job_role: employeeToEdit.job_role,
+        salary: employeeToEdit.salary,
+        plant: employeeToEdit.plant,
+      });
+    }
+  }, [employeeToEdit]);
 
   // 🔄 HANDLE INPUT CHANGE
   const handleChange = (e) => {
@@ -29,54 +42,77 @@ function App() {
     });
   };
 
-  // 📤 POST DATA
+  // 📤 POST/PUT DATA
   const handleSubmit = async () => {
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/employee/save/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      let response;
+      
+      if (employeeToEdit) {
+        // UPDATE EXISTING EMPLOYEE
+        response = await fetch(
+          `http://127.0.0.1:8000/api/employee/save/${employeeToEdit.id}/`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+      } else {
+        // CREATE NEW EMPLOYEE
+        response = await fetch(
+          "http://127.0.0.1:8000/api/employee/save/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+      }
 
       const data = await response.json();
-      alert(data.message);
-
-      setFormData({
-        name: "",
-        age: "",
-        department: "",
-        job_role: "",
-        salary: "",
-        plant: "",
-      });
-
       
-      fetchEmployees();
+      if (response.ok) {
+        alert(employeeToEdit ? "Employee updated successfully!" : data.message);
+        
+        // Reset form
+        setFormData({
+          name: "",
+          age: "",
+          department: "",
+          job_role: "",
+          salary: "",
+          plant: "",
+        });
+        
+        // Navigate back to employee list
+        navigate("/employees");
+      } else {
+        alert("Error saving employee");
+      }
     } catch (error) {
       alert("Error saving employee");
     }
   };
 
-  const fetchEmployees = async () => {
-    try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/employee/save/"
-      );
-      const data = await response.json();
-      setEmployees(data);
-    } catch (error) {
-      console.error("Error fetching employees", error);
-    }
+  // ❌ CANCEL EDIT
+  const handleCancel = () => {
+    // Reset form
+    setFormData({
+      name: "",
+      age: "",
+      department: "",
+      job_role: "",
+      salary: "",
+      plant: "",
+    });
+    
+    // Navigate back to employee list
+    navigate("/employees");
   };
-
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
 
   return (
     <div>
@@ -88,8 +124,23 @@ function App() {
       {/* TITLE */}
       <section className="section">
         <h1>TODO APPLICATION FOR ATOMONE</h1>
-        <h2>Employee Information</h2>
+        <h2>{employeeToEdit ? "Edit Employee Information" : "Employee Information"}</h2>
       </section>
+
+      {/* Navigation Link */}
+      <nav style={{ padding: '20px', textAlign: 'center' }}>
+        <Link 
+          to="/employees" 
+          style={{ 
+            textDecoration: 'none', 
+            color: '#007bff',
+            fontSize: '18px',
+            fontWeight: 'bold'
+          }}
+        >
+          View Employee List →
+        </Link>
+      </nav>
 
       {/* FORM */}
       <div className="form-container">
@@ -153,14 +204,28 @@ function App() {
           />
         </div>
 
-        <button onClick={handleSubmit}>Submit Employee Data</button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={handleSubmit}>
+            {employeeToEdit ? "Update Employee Data" : "Submit Employee Data"}
+          </button>
+          
+          {employeeToEdit && (
+            <button 
+              onClick={handleCancel}
+              style={{
+                backgroundColor: '#6c757d',
+                color: 'white',
+                border: 'none',
+                padding: '10px 20px',
+                cursor: 'pointer',
+                borderRadius: '5px'
+              }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </div>
-
-  <Routes>
-  
-  <Route path="/employees" element={<App1 />} />
-</Routes>
-    
     </div>
   );
 }
