@@ -7,7 +7,7 @@ function Result() {
   const [employees, setEmployees] = useState([]);
   const navigate = useNavigate();
 
-  // 📥 GET DATA
+  // GET DATA
   const fetchEmployees = async () => {
     try {
       const response = await fetch(
@@ -20,18 +20,18 @@ function Result() {
     }
   };
 
-  // 🚀 LOAD DATA ON PAGE LOAD
+  // LOAD DATA ON PAGE LOAD
   useEffect(() => {
     fetchEmployees();
   }, []);
 
-  // ✏️ NAVIGATE TO EDIT PAGE
+  //  NAVIGATE TO EDIT PAGE
   const handleEdit = (employee) => {
     // Navigate to home page with employee data in state
     navigate("/", { state: { employee } });
   };
 
-  // 🗑️ DELETE EMPLOYEE
+  // DELETE EMPLOYEE
   const deleteEmployee = async (id, name) => {
     // Confirm before deleting
     const confirmDelete = window.confirm(

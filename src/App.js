@@ -10,7 +10,7 @@ function App() {
   // Get employee data from navigation state (if editing)
   const employeeToEdit = location.state?.employee;
   
-  // 🟢 FORM STATE (POST/PUT)
+  //  FORM STATE (POST/PUT)
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -20,7 +20,7 @@ function App() {
     plant: "",
   });
 
-  // 🔄 POPULATE FORM IF EDITING
+  //  POPULATE FORM IF EDITING
   useEffect(() => {
     if (employeeToEdit) {
       setFormData({
@@ -34,7 +34,7 @@ function App() {
     }
   }, [employeeToEdit]);
 
-  // 🔄 HANDLE INPUT CHANGE
+  //  HANDLE INPUT CHANGE
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -42,7 +42,7 @@ function App() {
     });
   };
 
-  // 📤 POST/PUT DATA
+  //  POST/PUT DATA
   const handleSubmit = async () => {
     try {
       let response;
@@ -98,7 +98,7 @@ function App() {
     }
   };
 
-  // ❌ CANCEL EDIT
+  // CANCEL EDIT
   const handleCancel = () => {
     // Reset form
     setFormData({
